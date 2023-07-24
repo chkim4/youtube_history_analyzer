@@ -6,7 +6,11 @@
 ## 결과 예시
 <img src="./img/sample_result.PNG" alt="실행 결과 예시">
 
-*카테고리 정보: https://developers.google.com/youtube/v3/docs/videoCategories/list
+* 카테고리 정보는 data 폴더 내 [category_id_name_mapper.json](data/category_id_name_mapper.json) 파일에서 확인할 수 있습니다. 
+<br/>
+* 구조: {카테고리 id 값 : 카테고리 명}
+<br/>
+* 출처: https://developers.google.com/youtube/v3/docs/videoCategories/list
 
 <br/>
 <br/>
