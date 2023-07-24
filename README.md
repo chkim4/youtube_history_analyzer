@@ -4,7 +4,7 @@
 <br/>
 
 ## 결과 예시
-<img src="./img/sample_result.PNG" alt="실행 결과 예시">
+<img src="./img/sample_result.png" alt="실행 결과 예시">
 
 *카테고리 정보: https://developers.google.com/youtube/v3/docs/videoCategories/list
 
