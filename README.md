@@ -1,6 +1,6 @@
 # youtube_history_analyzer
-구글의 [Takeout](https://takeout.google.com/settings/takeout)과 [YouTube Data API v3](https://developers.google.com/youtube/v3/docs)를 이용하여 카테고리 및 채널 별로 시청한 유튜브 동영상 개수를 JSON 파일로 생성하는 프로젝트입니다.
-<br/>
+구글의 [Takeout](https://takeout.google.com/settings/takeout)과 [YouTube Data API v3](https://developers.google.com/youtube/v3/docs)를 이용하여 카테고리 및 채널별로 시청한 유튜브 동영상 개수를 JSON 파일로 생성하는 프로젝트입니다.
+
 <br/>
 
 ## 결과 예시
@@ -9,14 +9,12 @@
 *카테고리 정보: https://developers.google.com/youtube/v3/docs/videoCategories/list
 
 <br/>
-<br/>
 
 ## 설치
 * [python3](https://www.python.org/downloads)
 * [구글 Takeout](https://takeout.google.com/settings/takeout)
 * [YouTube Data API v3](https://developers.google.com/youtube/v3/docs)
 
-<br/>
 <br/>
 
 ## 사용법
