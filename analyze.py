@@ -1,33 +1,38 @@
 """
-구글 Takeout 데이터 기반으로 시청한 동영상 분석
-urls.txt는 여기서 가져옴 (dl 말고 그냥으로 실행)
-https://github.com/Jessime/youtube_history
-
+구글 Takeout 데이터 기반으로 시청한 동영상 분석 \n
+분석 내용 (광고 영상 포함, 재생 시간 미반영) \n
+  1) 카테고리 별 시청한 동영상 개수 \n
+  2) 채널 별 시청한 동영상 게수 \n
 """
 
 import requests
-
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
 from collections import defaultdict
-from dotenv import load_dotenv
 import os 
 import json
 
-load_dotenv()
+# 내가 작성한 모듈
+import _global
+import generate_json
+import sort_json
 
-filename = "urls.txt"
-DEVELOPER_KEY = os.environ.get('DEVELOPER_KEY')
-request_url = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id={id}&key={api_key}"
+DEVELOPER_KEY = 'API 키를 입력하세요.'
+request_url = "https://www.googleapis.com/youtube/v3/videos?part=snippet&id={id}&key=" + DEVELOPER_KEY
+
+# 아래 3개 변수는 딕셔너리 타입으로 JSON 파일 저장 시 사용. sort_json 이후 삭제함
+# category_id_nums: 카테고리 id 별 시청한 동영상 개수 저장
+# category_id_name_mapper: 각 카테고리 id와 해당 id의 대응하는 명칭으로 구성된 category_id_name_mapper.json 저장
+# channel_nums: 채널 별 시청한 동영상 개수 저장     
 
 category_id_nums = defaultdict(int)
 category_id_name_mapper = {}
 channel_nums = defaultdict(int)
 
-# with open('category_id_name_mapper.json') as json_file:
-#     category_id_name_mapper = json.load(json_file)
+with open('data/category_id_name_mapper.json') as json_file:
+    category_id_name_mapper = json.load(json_file)
 
-with open (filename, 'r', encoding='UTF8') as urls:  # 파일 불러내기
+with open (_global.URLS, 'r', encoding='UTF8') as urls:  # 파일 불러오기
     for index, url in enumerate(urls):                 # 모든 파일 1줄씩 읽기
         try:
             print("index: ", index)
@@ -36,51 +41,38 @@ with open (filename, 'r', encoding='UTF8') as urls:  # 파일 불러내기
             parsed_url = urlparse(url)
             _id = parse_qs(parsed_url.query)['v'][0]
 
-            r = requests.get(request_url.format(id=_id, api_key=DEVELOPER_KEY))
+            r = requests.get(request_url.format(id=_id))
             js = r.json()
             items = js["items"][0]
 
             category_id = items["snippet"]["categoryId"]
             category_id_nums[category_id] += 1
             channel_nums[items['snippet']['channelTitle']] +=1
-            channel_titles = open("channel_titles.txt", 'a', encoding='utf8')
-            channel_titles.write(items['snippet']['channelTitle'])
-            channel_titles.write("\n")
-            channel_titles.close()
         
         finally:
             continue
 
+# 정렬이 되지 않은 category_id_nums.json 생성 ({카테고리 id 값: 시청 횟수})
+# {카테고리 id :카테고리명}을 저장하는 'category_id_name_mapper.json'을 통해 
+# category_num.json{카테고리명: 시청 횟수} 생성
+generate_json.generate(category_id_nums, "w","category_id_nums.json")
 
-with open("category_id_nums.json", "w") as json_file:
-    json.dump(category_id_nums, json_file,sort_keys=True, indent=4,ensure_ascii=False)
-
-
+# 정렬이 되지 않은 category_name_nums 생성 ({카테고리 이름: 시청 횟수})
 category_name_nums = {}
 
 for category_id, nums in category_id_nums.items():
     category_name_nums[category_id_name_mapper[category_id]] = nums
 
-print("-------------------------")
-print("category_name_nums: " , category_name_nums)
+generate_json.generate(category_name_nums, "w", "category_name_nums.json")
 
-with open("category_name_nums.json", "w") as json_file:
-    json.dump(category_name_nums, json_file,sort_keys=True, indent=4,ensure_ascii=False)
+# 정렬이 되지 않은 channel_nums.json 생성 ({채널명: 시청 횟수})
+generate_json.generate(channel_nums, "w", "channel_nums.json")
 
-print("-------------------------")
-print("channel_nums: " , channel_nums)
+# 위에서 만든 2개의 json 파일을 정렬
+sort_json.sort("channel_nums.json")
+sort_json.sort("category_name_nums.json")
 
-
-# 아래 주석은 절대 지우지 말기
-# youtube api에서 조회한 category id 리스트를 이용하여 'categoryid: 카테고리 이름' 형태의 json 저장
-request_url = "https://www.googleapis.com/youtube/v3/videoCategories?part=snippet&key={api_key}&regionCode=US"
-DEVELOPER_KEY = "AIzaSyCKyh2bjMi4iMgKR5lQpgs0tFztkexVNQM"
-category_list_json = requests.get(request_url.format(api_key=DEVELOPER_KEY)).json()
-category_id_name_mapper = {}
-
-for category_info in category_list_json["items"]:
-    category_id_name_mapper[category_info["id"]] = category_info["snippet"]["title"]
-
-with open("category_id_name_mapper.json", "w") as json_file:
-    json.dump(category_id_name_mapper, json_file)
-# -------------------- 여기까지 지우지 말기 --------------------
+# 중간 과정에서 생성된 파일 삭제
+os.remove(_global.temporary_path+"category_name_nums.json")
+os.remove(_global.temporary_path+"category_id_nums.json")
+os.remove(_global.temporary_path+"channel_nums.json")
