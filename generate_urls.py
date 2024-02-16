@@ -22,20 +22,20 @@ WATCH_HISOTRY_DiRECTORY = './data/watch-history.html'
 watch-history.html 경로
 """
 
-def generate_urls(): 
+def generate(): 
     service = Service(executable_path="/usr/local/bin/chromedriver")
     base_path = Path(__file__).parent
     file_path = (base_path / WATCH_HISOTRY_DiRECTORY)
 
-    with webdriver.Chrome(service=service) as driver:
+    driver = webdriver.Chrome("chromedriver-win64/chromedriver.exe")
 
-        #href_pattern: //a[contains(@href, 'https://www.youtube.com/watch?v=')]"  
-        href_pattern = "//a[contains(@href, '" + YOUTUBE_URL_PATTERN + "')]"
+    #href_pattern: //a[contains(@href, 'https://www.youtube.com/watch?v=')]"  
+    href_pattern = "//a[contains(@href, '" + YOUTUBE_URL_PATTERN + "')]"
 
-        driver.get(str(file_path)) 
-        a_tags = driver.find_elements(By.XPATH, href_pattern)
-      
-        for a_tag in a_tags:
-            with open(_global.URLS, 'a') as f:
-                f.write(a_tag.get_attribute("href"))
-                f.write('\n')
+    driver.get(str(file_path)) 
+    a_tags = driver.find_elements(By.XPATH, href_pattern)
+    
+    for a_tag in a_tags:
+        with open(_global.URLS, 'a') as f:
+            f.write(a_tag.get_attribute("href"))
+            f.write('\n')

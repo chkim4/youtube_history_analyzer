@@ -35,7 +35,8 @@
 ```
 5. analyze.py에서 DEVELOPER_KEY 값을 자신의 [구글 API 키](https://support.google.com/googleapi/answer/6158862)로 변경합니다.
 6. analyze.py 파일을 실행합니다.
-7. 결과는 result 폴더에 json 형식으로 생성됩니다.
+7. 이때, 'generate_urls.generate()'를 별도로 먼저 실행한 뒤, 나머지 코드를 실행합니다.
+8. 결과는 result 폴더에 json 형식으로 생성됩니다.
    * sorted_category_name_nums.json: 카테고리별 시청한 동영상의 개수입니다.
    * sorted_channel_nums.json: 채널별 시청한 동영상의 개수입니다.
 

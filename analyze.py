@@ -15,6 +15,7 @@ import json
 # 내가 작성한 모듈
 import _global
 import generate_json
+import generate_urls
 import sort_json
 
 DEVELOPER_KEY = 'API 키를 입력하세요.'
@@ -31,6 +32,9 @@ channel_nums = defaultdict(int)
 
 with open('data/category_id_name_mapper.json') as json_file:
     category_id_name_mapper = json.load(json_file)
+
+# 이 코드를 실행한 후, 밑의 '파일 불러오기' 코드 실행하기
+# generate_urls.generate()
 
 with open (_global.URLS, 'r', encoding='UTF8') as urls:  # 파일 불러오기
     for index, url in enumerate(urls):                 # 모든 파일 1줄씩 읽기
